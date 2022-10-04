@@ -4,31 +4,42 @@ import multiprocessing
 
 ret = []
 
-def useless_function(queue, sec = 1):
-    print(f'Sleeping for {sec} second(s)')
+def funtion1(queue, sec = 1):
     time.sleep(sec)
-    print(f'Done sleeping')
-    
     ret = queue.get()
     ret.append(sec)
     queue.put(ret)
+
+def funtion2(id = 1):
+    time.sleep(1)
+    return id
     
-def main():
+def use_process():
     start = time.perf_counter()
     
+    processes = []
     queue = multiprocessing.Queue()
-    queue.put(ret)
-
-    process1 = multiprocessing.Process(target=useless_function, args=(queue, 2,))
-    process2 = multiprocessing.Process(target=useless_function, args =(queue, 3))
-    process1.start()
-    process2.start()
-    process1.join()
-    process2.join()
+    queue.put([3])
+    for i in range(0, 10):
+        p = multiprocessing.Process(target=funtion1, args=(queue, 1,))
+        p.start()
+        processes.append(p) 
+    for p in processes:
+        p.join()
     end = time.perf_counter()
 
     print(queue.get())  # Prints {"foo": True}
 
     print(f'Finished in {round(end-start, 2)} second(s)') 
+    
+def use_pool():
+    start = time.perf_counter()
+    p = multiprocessing.Pool(multiprocessing.cpu_count())
+    result = p.map(funtion2, range(10))
+    end = time.perf_counter()
+
+    print(result)  # Prints {"foo": True}
+
+    print(f'Finished in {round(end-start, 2)} second(s)') 
 if __name__ == "__main__":
-    main()
+    use_pool()
