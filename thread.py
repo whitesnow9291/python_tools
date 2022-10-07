@@ -42,4 +42,7 @@ def use_pool():
 
     print(f'Finished in {round(end-start, 2)} second(s)') 
 if __name__ == "__main__":
-    use_pool()
+    params = [(keyword, 'location_name', 'language_code', 'domain') for keyword in ['1','2']]
+    print(params)
+
+    # use_pool()
